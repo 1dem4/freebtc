@@ -1,0 +1,87 @@
+{% extends "default/layout.html.twig" %}
+
+{% block content %}
+    <section class="container">
+        <h1 class="text-center title">{{ name|default('Paytoshi Faucet') }}</h1>
+        <h3 class="text-center headline">{{ description|default('...faucet? Paytoshi!') }}</h3>
+        <hr />
+        <div class="custom-content">
+            {{ content.header_box|raw }}
+        </div>
+        <hr />
+
+        <div class="row">
+            <div class="col-md-3 hidden-xs hidden-sm custom-content">
+                {{ content.left_box|raw }}
+            </div>
+            <div class="col-md-6 col-sm-12">
+                <div class="faucet">
+                    {% include "default/alerts.html.twig" %}
+                    <h3 class="text-center">Claim your reward</h3>
+
+                    <ul class="reward-list text-center">
+                        {% for reward in rewards %}
+                            <li class="reward">{{ reward.amount }} satoshi ({{ reward.probability }}%)</li>
+                        {% endfor %}
+                    </ul>
+                    <div class="rewards_average text-center">(Average: {{ rewards_average }} satoshi)</div>
+                    <h4 class="text-center">Get a reward every {{ waiting_interval / 60 }} mins!</h4>
+                    <hr>
+
+                    <form action="{{ path('reward') }}" novalidate="novalidate" method="POST" class="form">
+                        <div class="form-group">
+                            <input class="form-control input-lg" type="text" name="address" 
+                                   value="{% if address is defined %}{{ address }}{% endif %}" 
+                                   placeholder="Enter your Bitcoin address">
+                        </div>
+
+                        <div class="custom-content">
+                            {{ content.center1_box|raw }}
+                        </div>
+
+                        <div class="form-group captcha">
+                            <center>
+                                {% include "default/" ~ captcha.provider ~ ".html.twig" with { public_key: captcha.public_key } %}
+                            </center>
+                        </div>
+
+                        <div class="custom-content">
+                            {{ content.center2_box|raw }}
+                        </div>
+
+                        <button class="form-control input-lg btn-info get-reward">Get a reward!</button>
+                        <input type="hidden" name="referral" value="{{ referral }}">
+
+                        <div class="custom-content">
+                            {{ content.center3_box|raw }}
+                        </div>
+
+                    </form>
+
+                    <div class="well well-sm text-center referral-box">Earn {{ referral_percentage }}% referral bonus! 
+                        Share your referral URL:<br>{{ url('homepage') ~ '?r=' ~ address|default('Bitcoin Address') }}</div>
+
+                </div>
+                        
+                <div class="text-center">
+                    <h3>What is a Bitcoin Faucet?</h3>
+                    <p>
+                        A faucet is a FREE Bitcoin site paying out up to {{ rewards_max }} satoshi every hour. Each time you visit this page and complete the captcha you will receive a payout amount randomly selected from the available amounts shown above. You will receive your payment directly to your <a href="https://paytoshi.org">Paytoshi wallet.</a><br/>
+                        <a href="{{ path('faq') }}">Read more</a>
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-3 hidden-xs hidden-sm ">                
+                <div class="custom-content">
+                    {{ content.right_box|raw }}
+                </div> 
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 custom-content" >
+                {{ content.footer_box|raw }}
+            </div>
+        </div>
+    </section>
+
+{% endblock %}
